@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -20,7 +21,15 @@ func main() {
 		Format: "[${ip}]:${port} ${status} - ${method} ${path}\n",
 	}))
 
-	app.Get("/", IndexHandler)
+	app.Use(favicon.New())
+
+	// Or extend your config for customization
+	app.Use(favicon.New(favicon.Config{
+		File: "./public/assets/img/favicon.ico",
+	}))
+
+	app.Static("/", "./public")
+
 	app.Post("/login", LoginHandler)
 
 	// Run the service
